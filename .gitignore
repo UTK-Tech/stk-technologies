@@ -1,0 +1,6 @@
+# reference / working files — do not publish
+terminal-industries-rendered.html
+ref-assets.json
+index.basic.bak.html
+.playwright-mcp/
+*.bak.html

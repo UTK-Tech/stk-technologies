@@ -3,214 +3,490 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STK Technologies LLC — IT &amp; Management Consulting</title>
-<meta name="description" content="STK Technologies LLC is a North Carolina-based IT and management consulting firm specializing in project/program management, Agile/SAFe delivery, ERP and cloud transformation, and AI enablement.">
+<title>STK Technologies LLC — Enterprise Technology Delivery</title>
+<meta name="description" content="STK Technologies LLC is a North Carolina-based IT and management consulting firm specializing in program/project management, Agile/SAFe delivery, ERP and cloud transformation, and AI enablement.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23052424'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='18' font-weight='700' fill='%2359c39b' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#0b1f38; --navy2:#13325a; --accent:#2f80ff; --accent2:#15c2c2;
-    --ink:#0f1b2d; --muted:#5a6b80; --line:#e6edf6; --bg:#ffffff; --soft:#f4f8fe;
+    --teal:#052424; --teal2:#073230; --teal3:#0a3a37;
+    --cream:#f1ece1; --cream2:#e8e1d3;
+    --white:#ffffff; --accent:#59c39b;
+    --on-dark:#e7efed; --mut-dark:rgba(231,239,237,.60);
+    --on-cream:#0d1f1e; --mut-cream:#5b6c67;
+    --line-dark:rgba(255,255,255,.14); --line-cream:rgba(5,36,36,.14);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.65;background:var(--bg)}
-  a{text-decoration:none}
-  .container{max-width:1120px;margin:0 auto;padding:0 24px}
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--teal);color:var(--on-dark);line-height:1.6;overflow-x:hidden}
+  a{text-decoration:none;color:inherit}
+  img{display:block;max-width:100%}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+  .mono{font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:.2em;font-size:11.5px;font-weight:500}
+  .display{font-weight:300;letter-spacing:-.025em;line-height:1.04}
 
-  /* Header */
-  header{position:sticky;top:0;z-index:50;background:rgba(11,31,56,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
-  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1120px;margin:0 auto}
-  .logo{display:flex;align-items:center;gap:12px;color:#fff;font-weight:800;font-size:19px;letter-spacing:.4px}
-  .logo .mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:0 6px 18px rgba(47,128,255,.45)}
-  .nav nav a{color:#cdd9ec;font-size:14px;margin-left:26px;transition:color .2s}
-  .nav nav a:hover{color:#fff}
-  .nav .cta{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:10px 18px;border-radius:9px;font-size:14px;font-weight:600;margin-left:26px}
+  /* ===== floating pill nav ===== */
+  .nav-shell{position:fixed;top:18px;left:0;right:0;z-index:100;display:flex;justify-content:center;padding:0 18px;transition:top .3s}
+  .nav{width:100%;max-width:1180px;display:flex;align-items:center;justify-content:space-between;
+    padding:11px 12px 11px 22px;border-radius:999px;
+    background:rgba(7,33,31,.55);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px) saturate(1.2);
+    box-shadow:0 10px 40px rgba(0,0,0,.28)}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:600;font-size:16px;letter-spacing:-.01em;color:#fff}
+  .logo .glyph{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-weight:700;color:var(--teal);
+    background:linear-gradient(135deg,#fff,#bfe9d8);font-size:15px}
+  .nav-links{display:flex;align-items:center;gap:4px}
+  .nav-links a{padding:9px 15px;border-radius:999px;font-size:13.5px;color:var(--mut-dark);transition:.18s}
+  .nav-links a:hover{color:#fff;background:rgba(255,255,255,.07)}
+  .nav-cta{display:flex;align-items:center;gap:10px}
+  .pill-btn{font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:.14em;font-size:11.5px;font-weight:500;
+    padding:11px 18px;border-radius:999px;background:#fff;color:var(--teal);transition:.18s}
+  .pill-btn:hover{background:var(--accent);color:var(--teal)}
+  .burger{display:none;width:42px;height:42px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.04);cursor:pointer;flex-direction:column;gap:5px;align-items:center;justify-content:center}
+  .burger span{width:17px;height:1.6px;background:#fff;transition:.25s}
 
-  /* Hero */
-  .hero{position:relative;overflow:hidden;background:radial-gradient(1200px 600px at 80% -10%,#1b4a8a 0%,transparent 60%),linear-gradient(160deg,#0b1f38 0%,#0e2747 55%,#0b1f38 100%);color:#fff;padding:110px 0 130px;text-align:center}
-  .hero .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.45}
-  .hero .b1{width:380px;height:380px;background:#2f80ff;top:-120px;left:-100px}
-  .hero .b2{width:320px;height:320px;background:#15c2c2;bottom:-140px;right:-80px}
-  .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#d7e6ff;padding:7px 15px;border-radius:999px;font-size:13px;font-weight:500;margin-bottom:26px}
-  .badge .dot{width:8px;height:8px;border-radius:50%;background:#27e0a0;box-shadow:0 0 0 4px rgba(39,224,160,.25)}
-  .hero h1{position:relative;font-size:52px;line-height:1.08;max-width:880px;margin:0 auto 20px;letter-spacing:-1px}
-  .hero h1 .grad{background:linear-gradient(90deg,#5aa6ff,#16d6d6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-  .hero p{position:relative;font-size:20px;color:#c3d3e8;max-width:660px;margin:0 auto 36px}
-  .hero .btns{position:relative;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-  .btn{padding:14px 26px;border-radius:11px;font-weight:600;font-size:15px;transition:transform .15s,box-shadow .2s}
-  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 10px 30px rgba(47,128,255,.4)}
-  .btn-primary:hover{transform:translateY(-2px)}
-  .btn-ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff}
+  /* mobile menu overlay */
+  .menu{position:fixed;inset:0;z-index:99;background:var(--teal);transform:translateY(-100%);transition:transform .5s cubic-bezier(.7,0,.2,1);
+    display:flex;flex-direction:column;justify-content:center;padding:32px;gap:6px}
+  .menu.open{transform:none}
+  .menu a{font-size:clamp(34px,8vw,64px);font-weight:300;letter-spacing:-.02em;color:#fff;padding:8px 0;border-bottom:1px solid var(--line-dark)}
+  .menu a:last-child{border:none}
+  .menu .mono{color:var(--accent);margin-bottom:18px}
 
-  /* Stats strip */
-  .stats{background:var(--soft);border-bottom:1px solid var(--line)}
-  .stats .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:46px 0}
-  .stat{text-align:center}
-  .stat .num{font-size:34px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-  .stat .lab{color:var(--muted);font-size:14px;margin-top:4px}
+  /* ===== hero ===== */
+  .hero{position:relative;height:100vh;min-height:640px;display:flex;align-items:flex-end;overflow:hidden}
+  .hero .bg{position:absolute;inset:0;z-index:0}
+  .hero .bg img{width:100%;height:120%;object-fit:cover;will-change:transform}
+  .hero .scrim{position:absolute;inset:0;z-index:1;
+    background:linear-gradient(180deg,rgba(5,36,36,.62) 0%,rgba(5,36,36,.28) 30%,rgba(5,36,36,.6) 70%,rgba(5,36,36,.96) 100%)}
+  .fx{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;opacity:.9}
+  .hero .wrap{position:relative;z-index:3;width:100%;padding-bottom:84px}
+  .hero .eyebrow{color:var(--accent);margin-bottom:22px}
+  .hero h1{font-size:clamp(40px,7vw,92px);color:#fff;max-width:14ch}
+  .hero h1 b{font-weight:500}
+  .hero p{margin-top:24px;max-width:560px;font-size:clamp(16px,1.4vw,19px);color:rgba(255,255,255,.82);font-weight:400}
+  .hero .btns{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap}
+  .btn{font-size:14px;font-weight:500;padding:15px 26px;border-radius:999px;transition:.2s;cursor:pointer}
+  .btn-light{background:#fff;color:var(--teal)}
+  .btn-light:hover{background:var(--accent);transform:translateY(-2px)}
+  .btn-line{border:1px solid rgba(255,255,255,.4);color:#fff}
+  .btn-line:hover{background:rgba(255,255,255,.1);border-color:#fff}
+  .scroll-ind{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;display:flex;flex-direction:column;
+    align-items:center;gap:10px;color:rgba(255,255,255,.6)}
+  .scroll-ind .arrow{width:1px;height:34px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.7));animation:drop 1.8s ease-in-out infinite}
+  @keyframes drop{0%,100%{transform:scaleY(.4);transform-origin:top;opacity:.4}50%{transform:scaleY(1);opacity:1}}
 
-  /* Sections */
-  section{padding:84px 0}
-  .eyebrow{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
-  h2{font-size:34px;color:var(--ink);letter-spacing:-.5px;margin-bottom:14px}
-  .lead{color:var(--muted);max-width:680px;font-size:17px;margin-bottom:46px}
+  /* ===== trusted strip ===== */
+  .trusted{background:var(--cream);color:var(--on-cream);padding:46px 0}
+  .trusted .row{display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap}
+  .trusted .mono{color:var(--mut-cream);white-space:nowrap}
+  .marks{display:flex;align-items:center;gap:14px 34px;flex-wrap:wrap}
+  .marks span{font-size:19px;font-weight:500;letter-spacing:-.01em;color:#1c302d;opacity:.78}
+  .marks .dot{opacity:.3;font-weight:400}
 
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px}
-  .card{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px;transition:transform .18s,box-shadow .25s,border-color .2s}
-  .card:hover{transform:translateY(-5px);box-shadow:0 18px 40px rgba(15,27,45,.1);border-color:#cfe0f7}
-  .icon{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;margin-bottom:18px;background:linear-gradient(135deg,rgba(47,128,255,.12),rgba(21,194,194,.12))}
-  .icon svg{width:28px;height:28px;stroke:var(--accent);fill:none;stroke-width:1.8}
-  .card h3{font-size:18px;color:var(--ink);margin-bottom:8px}
-  .card p{color:var(--muted);font-size:15px}
+  /* ===== big intro statement ===== */
+  .intro{background:var(--teal);padding:120px 0}
+  .intro .eyebrow{color:var(--accent);margin-bottom:30px}
+  .intro h2{font-size:clamp(30px,4.6vw,62px);color:#fff;max-width:18ch}
+  .intro h2 em{font-style:normal;color:var(--mut-dark)}
 
-  /* About band */
-  .about{background:linear-gradient(160deg,#0b1f38,#13325a);color:#fff}
-  .about .wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:50px;align-items:center}
-  .about h2{color:#fff}
-  .about p{color:#c3d3e8;font-size:17px}
-  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-  .chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#dcebff;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600}
-  .panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:30px}
-  .panel .row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:15px}
-  .panel .row:last-child{border:none}
-  .panel .row span:first-child{color:#a9bdd8}
-  .panel .row span:last-child{font-weight:700}
+  /* ===== capabilities (alternating) ===== */
+  .cap{padding:96px 0;border-top:1px solid var(--line-dark)}
+  .cap .grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .cap .num{font-family:'Geist Mono',monospace;font-size:13px;letter-spacing:.18em;color:var(--accent);margin-bottom:20px}
+  .cap h3{font-size:clamp(26px,3.4vw,46px);color:#fff;font-weight:300;letter-spacing:-.02em;margin-bottom:18px;line-height:1.08}
+  .cap p{color:var(--mut-dark);font-size:16px;max-width:46ch;margin-bottom:22px}
+  .cap .tags{display:flex;flex-wrap:wrap;gap:8px}
+  .cap .tag{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);border:1px solid var(--line-dark);padding:6px 12px;border-radius:999px}
+  .cap .visual{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--line-dark)}
+  .cap .visual img{width:100%;height:118%;object-fit:cover;will-change:transform}
+  .cap .visual::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;mix-blend-mode:screen;
+    background:linear-gradient(115deg,transparent 34%,rgba(255,255,255,.13) 47%,rgba(89,195,155,.16) 52%,transparent 66%);
+    background-size:260% 260%;animation:sheen 6.5s linear infinite}
+  .cap .visual::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.5;
+    background-image:linear-gradient(rgba(89,195,155,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(89,195,155,.10) 1px,transparent 1px);
+    background-size:30px 30px;mask-image:linear-gradient(180deg,transparent,#000 40%,#000 60%,transparent)}
+  @keyframes sheen{0%{background-position:135% 0}100%{background-position:-135% 0}}
+  .cap.alt .grid > .txt{order:2}
+  .cap.alt .grid > .visual{order:1}
 
-  /* Contact */
-  .contact .box{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
-  .cbox{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:26px;text-align:center}
-  .cbox .icon{margin:0 auto 14px}
-  .cbox a,.cbox p{color:var(--ink);font-weight:600;font-size:15px}
-  .cbox small{color:var(--muted);font-weight:500;display:block;font-size:13px;margin-bottom:6px}
+  /* ===== featured full-bleed band ===== */
+  .featured{position:relative;min-height:78vh;display:flex;align-items:center;overflow:hidden}
+  .featured .bg{position:absolute;inset:0;z-index:0}
+  .featured .bg img{width:100%;height:100%;object-fit:cover}
+  .featured .scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(5,36,36,.92),rgba(5,36,36,.55) 60%,rgba(5,36,36,.35))}
+  .featured .wrap{position:relative;z-index:3;padding:90px 32px}
+  .featured .eyebrow{color:var(--accent);margin-bottom:26px}
+  .featured blockquote{font-size:clamp(24px,3.4vw,46px);font-weight:300;letter-spacing:-.02em;line-height:1.18;color:#fff;max-width:20ch}
+  .featured .by{margin-top:30px;color:var(--mut-dark);font-size:14px}
+  .featured .by b{color:#fff;font-weight:500;display:block;letter-spacing:.01em}
 
-  footer{background:#081628;color:#8ea3bf;text-align:center;padding:30px 24px;font-size:13px}
+  /* ===== process (cream) ===== */
+  .process{background:var(--cream);color:var(--on-cream);padding:104px 0}
+  .process .eyebrow{color:var(--mut-cream);margin-bottom:22px}
+  .process h2{font-size:clamp(28px,3.6vw,50px);font-weight:300;letter-spacing:-.02em;max-width:16ch;margin-bottom:60px;color:#11231f}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+  .step{border-top:1px solid var(--line-cream);padding-top:22px}
+  .step .n{font-family:'Geist Mono',monospace;font-size:13px;letter-spacing:.14em;color:#11231f;opacity:.45;margin-bottom:14px}
+  .step h4{font-size:21px;font-weight:500;margin-bottom:8px;color:#11231f}
+  .step p{font-size:14.5px;color:var(--mut-cream)}
 
-  @media(max-width:760px){
-    .hero h1{font-size:36px}
-    .stats .grid{grid-template-columns:repeat(2,1fr)}
-    .about .wrap{grid-template-columns:1fr}
-    .nav nav{display:none}
+  /* ===== CTA form ===== */
+  .cta{background:var(--teal2);padding:104px 0}
+  .cta .grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+  .cta .eyebrow{color:var(--accent);margin-bottom:26px}
+  .cta h2{font-size:clamp(28px,3.8vw,52px);font-weight:300;letter-spacing:-.02em;color:#fff;margin-bottom:30px;line-height:1.08}
+  .cta ul{list-style:none;display:flex;flex-direction:column;gap:16px}
+  .cta li{display:flex;align-items:center;gap:14px;color:var(--on-dark);font-size:16px}
+  .cta li .chk{width:26px;height:26px;border-radius:999px;border:1px solid var(--accent);display:grid;place-items:center;color:var(--accent);font-size:13px;flex:none}
+  form .field{margin-bottom:16px}
+  form label{display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut-dark);margin-bottom:8px}
+  form input,form textarea{width:100%;font-family:inherit;font-size:15px;color:#fff;background:rgba(255,255,255,.04);
+    border:1px solid var(--line-dark);border-radius:12px;padding:14px 16px;transition:.18s}
+  form input:focus,form textarea:focus{outline:none;border-color:var(--accent);background:rgba(255,255,255,.07)}
+  form textarea{resize:vertical;min-height:96px}
+  form .btn-light{width:100%;border:none;margin-top:6px;font-size:14px}
+
+  /* ===== footer ===== */
+  footer{background:var(--teal);padding:90px 0 40px}
+  .foot-cta{font-size:clamp(30px,5vw,72px);font-weight:300;letter-spacing:-.025em;color:#fff;display:inline-flex;align-items:center;gap:18px;
+    padding-bottom:64px;border-bottom:1px solid var(--line-dark);width:100%}
+  .foot-cta:hover .arr{transform:translateX(8px)}
+  .foot-cta .arr{transition:.3s;color:var(--accent)}
+  .foot-cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.3fr;gap:36px;padding:56px 0 48px}
+  .foot-cols .mono{color:var(--mut-dark);margin-bottom:20px}
+  .foot-cols a,.foot-cols p{display:block;color:var(--on-dark);font-size:15px;margin-bottom:12px;transition:.16s}
+  .foot-cols a:hover{color:var(--accent)}
+  .foot-brand .logo{margin-bottom:18px}
+  .foot-brand p{color:var(--mut-dark);font-size:14px;max-width:30ch}
+  .foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:30px;border-top:1px solid var(--line-dark);
+    color:var(--mut-dark);font-size:13px}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.cap .visual::after{animation:none}}
+
+  @media(max-width:900px){
+    .nav-links{display:none}
+    .burger{display:flex}
+    .cap .grid,.cta .grid{grid-template-columns:1fr;gap:36px}
+    .cap.alt .grid > .txt{order:1}.cap.alt .grid > .visual{order:2}
+    .steps{grid-template-columns:repeat(2,1fr);gap:28px}
+    .foot-cols{grid-template-columns:1fr 1fr}
+    .featured .scrim{background:linear-gradient(180deg,rgba(5,36,36,.5),rgba(5,36,36,.92))}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 20px}
+    .steps,.foot-cols{grid-template-columns:1fr}
+    .nav-cta .pill-btn{display:none}
   }
 </style>
+<noscript><style>.rv{opacity:1;transform:none}</style></noscript>
 </head>
 <body>
 
-<header>
+<!-- nav -->
+<div class="nav-shell" id="navShell">
   <div class="nav">
-    <div class="logo"><span class="mark">S</span> STK Technologies</div>
-    <nav>
+    <a href="#top" class="logo"><span class="glyph">S</span> STK Technologies</a>
+    <div class="nav-links">
       <a href="#services">Services</a>
+      <a href="#industries">Industries</a>
+      <a href="#process">Process</a>
       <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a class="cta" href="#contact">Get in touch</a>
-    </nav>
-  </div>
-</header>
-
-<section class="hero">
-  <div class="blob b1"></div>
-  <div class="blob b2"></div>
-  <div class="container">
-    <span class="badge"><span class="dot"></span> Enterprise technology delivery partner</span>
-    <h1>Technology delivery,<br><span class="grad">done right.</span></h1>
-    <p>IT and management consulting for enterprises — program &amp; project management, Agile/SAFe delivery, ERP and cloud transformation, and AI enablement.</p>
-    <div class="btns">
-      <a class="btn btn-primary" href="#contact">Start a conversation</a>
-      <a class="btn btn-ghost" href="#services">Explore services</a>
     </div>
-  </div>
-</section>
-
-<div class="stats">
-  <div class="container">
-    <div class="grid">
-      <div class="stat"><div class="num">12+</div><div class="lab">Years delivering programs</div></div>
-      <div class="stat"><div class="num">Est. 2021</div><div class="lab">North Carolina LLC</div></div>
-      <div class="stat"><div class="num">PMP·SAFe·CSM</div><div class="lab">Certified leadership</div></div>
-      <div class="stat"><div class="num">4</div><div class="lab">Industries served</div></div>
+    <div class="nav-cta">
+      <a href="#contact" class="pill-btn">Book a consult</a>
+      <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
   </div>
 </div>
 
-<section id="services">
-  <div class="container">
-    <div class="eyebrow">What we do</div>
-    <h2>Built to deliver complex programs</h2>
-    <p class="lead">STK Technologies LLC partners with enterprise clients to plan, lead, and ship technology programs on time and on budget.</p>
-    <div class="cards">
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h12"/><circle cx="19" cy="18" r="2"/></svg></div>
-        <h3>Program &amp; Project Management</h3>
-        <p>End-to-end delivery leadership across cross-functional teams, with disciplined planning, risk management, and executive reporting.</p>
-      </div>
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="5"/></svg></div>
-        <h3>Agile &amp; SAFe Delivery</h3>
-        <p>Scrum, SAFe, and hybrid delivery — backlog management, ceremonies, and release planning that keep teams shipping.</p>
-      </div>
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 7l8-4 8 4-8 4-8-4zM4 7v10l8 4 8-4V7M12 11v10"/></svg></div>
-        <h3>ERP &amp; Cloud Transformation</h3>
-        <p>Modernization and integration programs across ERP, cloud, and enterprise data platforms.</p>
-      </div>
-      <div class="card">
-        <div class="icon"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="3"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg></div>
-        <h3>AI Enablement</h3>
-        <p>Bringing GenAI and automation into business workflows with a focus on measurable outcomes and responsible adoption.</p>
+<!-- mobile menu -->
+<div class="menu" id="menu">
+  <div class="mono">STK Technologies LLC</div>
+  <a href="#services">Services</a>
+  <a href="#industries">Industries</a>
+  <a href="#process">Process</a>
+  <a href="#about">About</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<a id="top"></a>
+
+<!-- hero -->
+<section class="hero">
+  <div class="bg"><img id="heroImg" src="hero-3d.jpg" alt="Enterprise technology delivery — 3D render" width="2000" height="1333"></div>
+  <div class="scrim"></div>
+  <canvas class="fx" id="fxHero"></canvas>
+  <div class="wrap">
+    <div class="mono eyebrow">Enterprise Technology Delivery · Est. 2021</div>
+    <h1 class="display">Technology delivery, <b>done right.</b></h1>
+    <p>IT and management consulting for enterprises — program &amp; project management, Agile/SAFe delivery, ERP &amp; cloud transformation, and AI enablement.</p>
+    <div class="btns">
+      <a href="#contact" class="btn btn-light">Start an engagement</a>
+      <a href="#services" class="btn btn-line">Explore services</a>
+    </div>
+  </div>
+  <div class="scroll-ind">
+    <div class="arrow"></div>
+    <div class="mono">Scroll to explore</div>
+  </div>
+</section>
+
+<!-- trusted strip -->
+<section class="trusted" id="industries">
+  <div class="wrap">
+    <div class="row">
+      <div class="mono">Trusted across enterprise verticals</div>
+      <div class="marks">
+        <span>Finance</span><span class="dot">·</span>
+        <span>Media</span><span class="dot">·</span>
+        <span>Healthcare</span><span class="dot">·</span>
+        <span>Energy</span><span class="dot">·</span>
+        <span>PMP</span><span class="dot">·</span>
+        <span>SAFe</span><span class="dot">·</span>
+        <span>CSM</span>
       </div>
     </div>
   </div>
 </section>
 
-<section class="about" id="about">
-  <div class="container">
-    <div class="wrap">
+<!-- intro statement -->
+<section class="intro">
+  <div class="wrap rv">
+    <div class="mono eyebrow">What we do</div>
+    <h2 class="display">We plan, lead, and ship complex technology programs — <em>on time, on budget, and built to last.</em></h2>
+  </div>
+</section>
+
+<!-- capabilities -->
+<div id="services"></div>
+
+<section class="cap">
+  <div class="wrap"><div class="grid rv">
+    <div class="txt">
+      <div class="num">Capability 01</div>
+      <h3>Program &amp; Project Management</h3>
+      <p>End-to-end delivery leadership across cross-functional teams — disciplined planning, risk management, and executive reporting that keep high-stakes initiatives on track.</p>
+      <div class="tags"><span class="tag">PMO</span><span class="tag">Roadmaps</span><span class="tag">Risk</span><span class="tag">Governance</span></div>
+    </div>
+    <div class="visual"><img src="img-ai-cube.jpg" alt="Program delivery"></div>
+  </div></div>
+</section>
+
+<section class="cap alt">
+  <div class="wrap"><div class="grid rv">
+    <div class="txt">
+      <div class="num">Capability 02</div>
+      <h3>Agile &amp; SAFe Delivery</h3>
+      <p>Scrum, SAFe, and hybrid delivery at enterprise scale — backlog management, PI planning, and release cadences that keep teams shipping predictably.</p>
+      <div class="tags"><span class="tag">Scrum</span><span class="tag">SAFe</span><span class="tag">PI Planning</span><span class="tag">CI/CD</span></div>
+    </div>
+    <div class="visual"><img src="cap-helix.jpg" alt="Agile delivery"></div>
+  </div></div>
+</section>
+
+<section class="cap">
+  <div class="wrap"><div class="grid rv">
+    <div class="txt">
+      <div class="num">Capability 03</div>
+      <h3>ERP &amp; Cloud Transformation</h3>
+      <p>Modernization and integration programs across ERP, cloud, and enterprise data platforms — migrating critical systems with minimal disruption.</p>
+      <div class="tags"><span class="tag">ERP</span><span class="tag">Cloud</span><span class="tag">Migration</span><span class="tag">Data</span></div>
+    </div>
+    <div class="visual"><img src="cap-voxel.jpg" alt="Cloud transformation"></div>
+  </div></div>
+</section>
+
+<section class="cap alt">
+  <div class="wrap"><div class="grid rv">
+    <div class="txt">
+      <div class="num">Capability 04</div>
+      <h3>AI Enablement</h3>
+      <p>Bringing GenAI and automation into business workflows with a focus on measurable outcomes, governance, and responsible adoption.</p>
+      <div class="tags"><span class="tag">GenAI</span><span class="tag">Automation</span><span class="tag">LLMOps</span><span class="tag">Governance</span></div>
+    </div>
+    <div class="visual"><img src="ai-consulting.jpg" alt="AI enablement"></div>
+  </div></div>
+</section>
+
+<!-- featured band -->
+<section class="featured">
+  <div class="bg"><img src="featured-3d.jpg" alt="Enterprise scale — 3D render"></div>
+  <div class="scrim"></div>
+  <canvas class="fx" id="fxFeatured"></canvas>
+  <div class="wrap">
+    <div class="mono eyebrow">Built for enterprise scale</div>
+    <blockquote>Senior, certified delivery leadership — on every engagement, from day one.</blockquote>
+    <div class="by">
+      <b>STK Technologies LLC</b>
+      Delivery Leadership · Raleigh, North Carolina
+    </div>
+  </div>
+</section>
+
+<!-- process -->
+<section class="process" id="process">
+  <div class="wrap">
+    <div class="mono eyebrow rv">How we work</div>
+    <h2 class="display rv">A disciplined delivery loop, repeated until it's sustainable.</h2>
+    <div class="steps rv">
+      <div class="step"><div class="n">01 / Discover</div><h4>Discover</h4><p>Assess scope, stakeholders, risks, and the current-state architecture.</p></div>
+      <div class="step"><div class="n">02 / Plan</div><h4>Plan</h4><p>Roadmap, delivery model, and KPIs with a governance cadence aligned to outcomes.</p></div>
+      <div class="step"><div class="n">03 / Deliver</div><h4>Deliver</h4><p>Lead execution across teams with transparent tracking and active risk management.</p></div>
+      <div class="step"><div class="n">04 / Optimize</div><h4>Optimize</h4><p>Measure, iterate, and harden — handing off a sustainable operating model.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA form -->
+<section class="cta" id="contact">
+  <div class="wrap">
+    <div class="grid">
+      <div class="rv">
+        <div class="mono eyebrow">Take a closer look</div>
+        <h2 class="display">Let's talk about your next initiative.</h2>
+        <ul>
+          <li><span class="chk">✓</span> 30-minute discovery consult</li>
+          <li><span class="chk">✓</span> Program &amp; delivery assessment</li>
+          <li><span class="chk">✓</span> Response within one business day</li>
+        </ul>
+      </div>
+      <form class="rv" action="mailto:usman_khan@stktechnologiesconsulting.com" method="post" enctype="text/plain">
+        <div class="field"><label>Name</label><input type="text" name="Name" required></div>
+        <div class="field"><label>Company</label><input type="text" name="Company"></div>
+        <div class="field"><label>Email</label><input type="email" name="Email" required></div>
+        <div class="field"><label>How can we help?</label><textarea name="Message"></textarea></div>
+        <button type="submit" class="btn btn-light">Send message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- footer -->
+<footer id="about">
+  <div class="wrap">
+    <a href="#contact" class="foot-cta display">Ready for your next initiative? <span class="arr">→</span></a>
+    <div class="foot-cols">
+      <div class="foot-brand">
+        <a href="#top" class="logo"><span class="glyph">S</span> STK Technologies</a>
+        <p>Enterprise IT &amp; management consulting. Founded 2021 · Raleigh, North Carolina.</p>
+      </div>
       <div>
-        <div class="eyebrow" style="color:#7fb6ff">About STK</div>
-        <h2>Senior delivery leadership, every engagement</h2>
-        <p>Founded in 2021 and based in North Carolina, STK Technologies LLC delivers consulting and technology services to clients across finance, media, healthcare, and energy. We bring certified, hands-on leadership to high-stakes programs.</p>
-        <div class="chips">
-          <span class="chip">Finance</span><span class="chip">Media</span><span class="chip">Healthcare</span><span class="chip">Energy</span>
-          <span class="chip">PMP</span><span class="chip">SAFe</span><span class="chip">CSM</span>
-        </div>
+        <div class="mono">Services</div>
+        <a href="#services">Program Management</a>
+        <a href="#services">Agile &amp; SAFe</a>
+        <a href="#services">ERP &amp; Cloud</a>
+        <a href="#services">AI Enablement</a>
       </div>
-      <div class="panel">
-        <div class="row"><span>Founded</span><span>2021</span></div>
-        <div class="row"><span>Headquarters</span><span>Raleigh, NC</span></div>
-        <div class="row"><span>Focus</span><span>PM · Agile · ERP · AI</span></div>
-        <div class="row"><span>Engagements</span><span>Enterprise &amp; mid-market</span></div>
+      <div>
+        <div class="mono">Company</div>
+        <a href="#industries">Industries</a>
+        <a href="#process">Process</a>
+        <a href="#contact">Contact</a>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="contact" id="contact">
-  <div class="container">
-    <div class="eyebrow">Contact</div>
-    <h2>Let's talk about your next initiative</h2>
-    <p class="lead">Reach out and we'll get back to you within one business day.</p>
-    <div class="box">
-      <div class="cbox">
-        <div class="icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <small>Office</small>
+      <div>
+        <div class="mono">Reach us</div>
         <p>4030 Wake Forest Rd, Ste 349<br>Raleigh, NC 27609</p>
-      </div>
-      <div class="cbox">
-        <div class="icon"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.5 2.1L8.1 9.5a16 16 0 006 6l1.1-1.1a2 2 0 012.1-.5c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z"/></svg></div>
-        <small>Phone</small>
-        <a href="tel:+13234224831">323-422-4831</a>
-      </div>
-      <div class="cbox">
-        <div class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 6l10 7 10-7"/></svg></div>
-        <small>Email</small>
+        <a href="tel:+13234224831">+1 (323) 422-4831</a>
         <a href="mailto:usman_khan@stktechnologiesconsulting.com">usman_khan@stktechnologiesconsulting.com</a>
       </div>
     </div>
+    <div class="foot-bottom">
+      <span>© 2026 STK Technologies LLC · All rights reserved.</span>
+      <span>Raleigh, North Carolina</span>
+    </div>
   </div>
-</section>
-
-<footer>
-  &copy; 2026 STK Technologies LLC · Raleigh, North Carolina · All rights reserved.
 </footer>
 
+<script>
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  // ---- mobile menu ----
+  var burger=document.getElementById('burger'), menu=document.getElementById('menu');
+  burger.addEventListener('click',function(){ menu.classList.toggle('open'); });
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ menu.classList.remove('open'); }); });
+
+  // ---- animated network graphic (scroll-reactive 3D point cloud) ----
+  function network(canvas, opts){
+    if(!canvas) return;
+    var ctx=canvas.getContext('2d'), w=0,h=0,dpr=1, pts=[], N=opts.count;
+    for(var i=0;i<N;i++) pts.push({x:Math.random()*2-1, y:Math.random()*2-1, z:Math.random()*2-1});
+    function resize(){
+      dpr=Math.min(window.devicePixelRatio||1,2);
+      w=canvas.clientWidth; h=canvas.clientHeight;
+      canvas.width=w*dpr; canvas.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    var t=0, mx=0,my=0;
+    window.addEventListener('mousemove',function(e){ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); },{passive:true});
+    function frame(){
+      t+=0.0022;
+      // rotation driven by time + scroll position -> scrolling visibly turns the graphic
+      var ang = t + window.scrollY*0.0016 + mx*0.6;
+      var tilt = 0.34 + my*0.25;
+      var ca=Math.cos(ang), sa=Math.sin(ang), ct=Math.cos(tilt), st=Math.sin(tilt);
+      var cx=w/2, cy=h/2, scale=Math.min(w,h)*0.46, persp=2.6, link=opts.link, link2=link*link;
+      ctx.clearRect(0,0,w,h);
+      var pr=[], p,X,Y,Z,Zt,f;
+      for(var i=0;i<N;i++){
+        p=pts[i];
+        X=p.x*ca - p.z*sa; Z=p.x*sa + p.z*ca;
+        Y=p.y*ct - Z*st;   Zt=p.y*st + Z*ct;
+        f=persp/(persp+Zt);
+        pr.push({x:cx+X*scale*f, y:cy+Y*scale*f, f:f});
+      }
+      var a,b,dx,dy,d2,al;
+      ctx.lineWidth=0.7;
+      for(var j=0;j<N;j++){ a=pr[j];
+        for(var k=j+1;k<N;k++){ b=pr[k];
+          dx=a.x-b.x; dy=a.y-b.y; d2=dx*dx+dy*dy;
+          if(d2<link2){ al=(1-Math.sqrt(d2)/link)*0.55;
+            ctx.strokeStyle='rgba('+opts.line+','+al.toFixed(3)+')';
+            ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+          }
+        }
+      }
+      for(var m=0;m<N;m++){ a=pr[m];
+        ctx.fillStyle='rgba('+opts.node+','+(0.55*a.f).toFixed(3)+')';
+        ctx.beginPath(); ctx.arc(a.x,a.y,1.7*a.f,0,6.2832); ctx.fill();
+      }
+      if(!reduce) requestAnimationFrame(frame);
+    }
+    resize(); window.addEventListener('resize',resize); frame();
+  }
+  network(document.getElementById('fxHero'),     {count:78, link:128, line:'120,224,190', node:'225,245,238'});
+  network(document.getElementById('fxFeatured'), {count:64, link:120, line:'89,195,155',  node:'200,236,222'});
+
+  // ---- scroll-scrubbed parallax / zoom on every image ----
+  var heroImg=document.getElementById('heroImg');
+  var capImgs=[].slice.call(document.querySelectorAll('.cap .visual img'));
+  var ticking=false;
+  function onScroll(){
+    var y=window.scrollY, vh=window.innerHeight;
+    if(heroImg && y<1100) heroImg.style.transform='translateY('+(y*0.16)+'px) scale('+(1+y/9000)+')';
+    capImgs.forEach(function(img){
+      var r=img.parentNode.getBoundingClientRect();
+      var p=(vh - r.top)/(vh + r.height); p=p<0?0:p>1?1:p;   // 0..1 across the viewport
+      img.style.transform='translateY('+((p-0.5)*-46)+'px) scale('+(1.12 - p*0.06)+')';
+    });
+    // nav hide on scroll-down
+    navShell.style.top = (y>lastY && y>180) ? '-90px' : '18px'; lastY=y;
+    ticking=false;
+  }
+  var lastY=0, navShell=document.getElementById('navShell');
+  window.addEventListener('scroll',function(){ if(!ticking){ ticking=true; requestAnimationFrame(onScroll);} },{passive:true});
+  onScroll();
+
+  // ---- scroll reveal ----
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.15});
+  document.querySelectorAll('.rv').forEach(function(n){ io.observe(n); });
+</script>
 </body>
 </html>
