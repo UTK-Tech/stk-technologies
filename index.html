@@ -8,7 +8,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23052424'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='18' font-weight='700' fill='%2359c39b' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
 <style>
   :root{
     --teal:#052424; --teal2:#073230; --teal3:#0a3a37;
@@ -45,7 +46,10 @@
   .pill-btn:hover{background:var(--accent);color:var(--teal)}
   .burger{display:none;width:42px;height:42px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
     background:rgba(255,255,255,.04);cursor:pointer;flex-direction:column;gap:5px;align-items:center;justify-content:center}
-  .burger span{width:17px;height:1.6px;background:#fff;transition:.25s}
+  .burger span{width:17px;height:1.6px;background:#fff;transition:transform .25s ease,opacity .25s ease}
+  .burger.open span:nth-child(1){transform:translateY(6.6px) rotate(45deg)}
+  .burger.open span:nth-child(2){opacity:0}
+  .burger.open span:nth-child(3){transform:translateY(-6.6px) rotate(-45deg)}
 
   /* mobile menu overlay */
   .menu{position:fixed;inset:0;z-index:99;background:var(--teal);transform:translateY(-100%);transition:transform .5s cubic-bezier(.7,0,.2,1);
@@ -57,10 +61,6 @@
 
   /* ===== hero ===== */
   .hero{position:relative;height:100vh;min-height:640px;display:flex;align-items:flex-end;overflow:hidden}
-  .hero .bg{position:absolute;inset:0;z-index:0}
-  .hero .bg img{width:100%;height:120%;object-fit:cover;will-change:transform}
-  .hero .scrim{position:absolute;inset:0;z-index:1;
-    background:linear-gradient(180deg,rgba(5,36,36,.62) 0%,rgba(5,36,36,.28) 30%,rgba(5,36,36,.6) 70%,rgba(5,36,36,.96) 100%)}
   .fx{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;opacity:.9}
   .hero .wrap{position:relative;z-index:3;width:100%;padding-bottom:84px}
   .hero .eyebrow{color:var(--accent);margin-bottom:22px}
@@ -68,15 +68,58 @@
   .hero h1 b{font-weight:500}
   .hero p{margin-top:24px;max-width:560px;font-size:clamp(16px,1.4vw,19px);color:rgba(255,255,255,.82);font-weight:400}
   .hero .btns{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap}
-  .btn{font-size:14px;font-weight:500;padding:15px 26px;border-radius:999px;transition:.2s;cursor:pointer}
+  .btn{font-size:14px;font-weight:500;padding:15px 26px;border-radius:999px;cursor:pointer;
+    transition:transform .25s cubic-bezier(.2,.7,.2,1),background .25s ease,border-color .25s ease,filter .25s ease,box-shadow .25s ease}
+  .btn:active{transform:translateY(0) scale(.985)}
   .btn-light{background:#fff;color:var(--teal)}
-  .btn-light:hover{background:var(--accent);transform:translateY(-2px)}
+  .btn-light:hover{background:var(--accent);transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.25)}
   .btn-line{border:1px solid rgba(255,255,255,.4);color:#fff}
-  .btn-line:hover{background:rgba(255,255,255,.1);border-color:#fff}
+  .btn-line:hover{background:rgba(255,255,255,.1);border-color:#fff;transform:translateY(-2px)}
+
+  /* keyboard focus */
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  form input:focus-visible,form textarea:focus-visible{outline:none} /* fields signal focus via accent border */
+  .trusted :focus-visible,.process :focus-visible{outline-color:#0c4f43}
+
+  /* skip link */
+  .skip{position:absolute;left:18px;top:-64px;z-index:200;background:var(--accent);color:var(--teal);
+    padding:11px 20px;border-radius:999px;font-size:13px;font-weight:600;transition:top .2s ease}
+  .skip:focus{top:18px}
   .scroll-ind{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:4;display:flex;flex-direction:column;
     align-items:center;gap:10px;color:rgba(255,255,255,.6)}
   .scroll-ind .arrow{width:1px;height:34px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.7));animation:drop 1.8s ease-in-out infinite}
   @keyframes drop{0%,100%{transform:scaleY(.4);transform-origin:top;opacity:.4}50%{transform:scaleY(1);opacity:1}}
+
+  /* ===== hero: video + liquid glass refresh ===== */
+  .hero{align-items:center;text-align:center}
+  .hero video.bgvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.6}
+  .hero .grad-l{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,var(--teal) 0%,rgba(5,36,36,.45) 38%,transparent 72%)}
+  .hero .grad-b{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,var(--teal) 0%,rgba(5,36,36,.55) 24%,transparent 60%)}
+  .hero .gridlines{position:absolute;inset:0;z-index:2;pointer-events:none}
+  .hero .gridlines i{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.10)}
+  .hero .glow{position:absolute;left:50%;top:5%;transform:translateX(-50%);z-index:1;pointer-events:none;max-width:none}
+  .hero .wrap{display:flex;flex-direction:column;align-items:center;padding-bottom:0}
+  .hero .eyebrow{margin-bottom:18px}
+  .hero h1{font-size:clamp(40px,6.4vw,72px);font-weight:800;text-transform:uppercase;letter-spacing:-.02em;max-width:16ch}
+  .hero h1 .dot{color:var(--accent)}
+  .hero p{margin-left:auto;margin-right:auto;max-width:512px;font-size:14px;color:rgba(255,255,255,.72)}
+  .hero .btns{justify-content:center}
+  .btn-accent{background:var(--accent);color:var(--teal);text-transform:uppercase;font-family:'Geist Mono',monospace;
+    letter-spacing:.12em;font-weight:600;font-size:12px;display:inline-flex;align-items:center;gap:9px}
+  .btn-accent:hover{transform:translateY(-2px);filter:brightness(1.06)}
+
+  .glass{position:relative;width:200px;height:200px;border-radius:22px;margin-bottom:34px;transform:translateY(-50px);
+    background:rgba(255,255,255,.01);background-blend-mode:luminosity;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+    box-shadow:inset 0 1px 1px rgba(255,255,255,.1);display:flex;flex-direction:column;justify-content:space-between;padding:20px;text-align:left}
+  .glass::before{content:"";position:absolute;inset:0;padding:1.4px;border-radius:inherit;
+    background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.04));
+    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+  .glass .g-tag{font-family:'Geist Mono',monospace;font-size:14px;letter-spacing:.12em;color:rgba(255,255,255,.72)}
+  .glass .g-head{font-size:18px;font-weight:600;line-height:1.25;color:#fff}
+  .glass .g-head em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400}
+  .glass .g-desc{font-size:11px;line-height:1.5;color:rgba(255,255,255,.55)}
+  @media(max-width:900px){.hero .gridlines,.hero .glow{display:none}}
 
   /* ===== trusted strip ===== */
   .trusted{background:var(--cream);color:var(--on-cream);padding:46px 0}
@@ -92,6 +135,17 @@
   .intro h2{font-size:clamp(30px,4.6vw,62px);color:#fff;max-width:18ch}
   .intro h2 em{font-style:normal;color:var(--mut-dark)}
 
+  /* ===== stats band ===== */
+  .stats{background:var(--teal);padding:0 0 110px}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+  .stat{border-top:1px solid var(--line-dark);padding-top:24px;transition:border-color .4s ease}
+  .stat:hover{border-top-color:rgba(89,195,155,.5)}
+  .stat-v{font-weight:300;letter-spacing:-.025em;line-height:1.05;font-size:clamp(34px,3.8vw,56px);color:#fff;margin-bottom:12px;font-variant-numeric:tabular-nums}
+  .stat-v .sign{color:var(--accent);font-weight:400}
+  .stat-v .unit{color:var(--accent);font-weight:400;font-size:.5em;letter-spacing:0}
+  .stat-l{font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--mut-dark);line-height:1.8}
+  @media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+
   /* ===== capabilities (alternating) ===== */
   .cap{padding:96px 0;border-top:1px solid var(--line-dark)}
   .cap .grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
@@ -100,8 +154,12 @@
   .cap p{color:var(--mut-dark);font-size:16px;max-width:46ch;margin-bottom:22px}
   .cap .tags{display:flex;flex-wrap:wrap;gap:8px}
   .cap .tag{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--accent);border:1px solid var(--line-dark);padding:6px 12px;border-radius:999px}
-  .cap .visual{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--line-dark)}
+    color:var(--accent);border:1px solid var(--line-dark);padding:6px 12px;border-radius:999px;
+    transition:border-color .25s ease,background .25s ease}
+  .cap .tag:hover{border-color:rgba(89,195,155,.45);background:rgba(89,195,155,.06)}
+  .cap .visual{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--line-dark);
+    transition:border-color .5s ease,box-shadow .5s ease}
+  .cap .visual:hover{border-color:rgba(89,195,155,.4);box-shadow:0 22px 60px rgba(0,0,0,.32)}
   .cap .visual img{width:100%;height:118%;object-fit:cover;will-change:transform}
   .cap .visual::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;mix-blend-mode:screen;
     background:linear-gradient(115deg,transparent 34%,rgba(255,255,255,.13) 47%,rgba(89,195,155,.16) 52%,transparent 66%);
@@ -129,7 +187,8 @@
   .process .eyebrow{color:var(--mut-cream);margin-bottom:22px}
   .process h2{font-size:clamp(28px,3.6vw,50px);font-weight:300;letter-spacing:-.02em;max-width:16ch;margin-bottom:60px;color:#11231f}
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
-  .step{border-top:1px solid var(--line-cream);padding-top:22px}
+  .step{border-top:1px solid var(--line-cream);padding-top:22px;transition:border-color .4s ease}
+  .step:hover{border-top-color:rgba(5,36,36,.45)}
   .step .n{font-family:'Geist Mono',monospace;font-size:13px;letter-spacing:.14em;color:#11231f;opacity:.45;margin-bottom:14px}
   .step h4{font-size:21px;font-weight:500;margin-bottom:8px;color:#11231f}
   .step p{font-size:14.5px;color:var(--mut-cream)}
@@ -168,7 +227,15 @@
   /* reveal */
   .rv{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
   .rv.in{opacity:1;transform:none}
-  @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.cap .visual::after{animation:none}}
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .rv{opacity:1;transform:none;transition:none}
+    .cap .visual::after{animation:none}
+    .scroll-ind .arrow{animation:none;transform:none;opacity:.7}
+    .btn,.btn-light,.btn-line,.cap .visual,.cap .tag,.stat,.step,.foot-cta .arr{transition:none}
+    .btn-light:hover,.btn-line:hover{transform:none}
+    .foot-cta:hover .arr{transform:none}
+  }
 
   @media(max-width:900px){
     .nav-links{display:none}
@@ -189,10 +256,12 @@
 </head>
 <body>
 
+<a class="skip" href="#main">Skip to content</a>
+
 <!-- nav -->
 <div class="nav-shell" id="navShell">
-  <div class="nav">
-    <a href="#top" class="logo"><span class="glyph">S</span> STK Technologies</a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#top" class="logo"><span class="glyph" aria-hidden="true">S</span> STK Technologies</a>
     <div class="nav-links">
       <a href="#services">Services</a>
       <a href="#industries">Industries</a>
@@ -201,38 +270,51 @@
     </div>
     <div class="nav-cta">
       <a href="#contact" class="pill-btn">Book a consult</a>
-      <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
     </div>
-  </div>
+  </nav>
 </div>
 
 <!-- mobile menu -->
-<div class="menu" id="menu">
+<nav class="menu" id="menu" aria-label="Mobile navigation">
   <div class="mono">STK Technologies LLC</div>
   <a href="#services">Services</a>
   <a href="#industries">Industries</a>
   <a href="#process">Process</a>
   <a href="#about">About</a>
   <a href="#contact">Contact</a>
-</div>
+</nav>
 
 <a id="top"></a>
 
 <!-- hero -->
-<section class="hero">
-  <div class="bg"><img id="heroImg" src="hero-3d.jpg" alt="Enterprise technology delivery — 3D render" width="2000" height="1333"></div>
-  <div class="scrim"></div>
-  <canvas class="fx" id="fxHero"></canvas>
+<section class="hero" id="main">
+  <video class="bgvid" id="heroVid" muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+  <div class="grad-l" aria-hidden="true"></div>
+  <div class="grad-b" aria-hidden="true"></div>
+  <div class="gridlines" aria-hidden="true"><i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i></div>
+  <svg class="glow" width="1100" height="500" viewBox="0 0 1100 500" aria-hidden="true">
+    <defs><filter id="hglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="25"/></filter></defs>
+    <ellipse cx="550" cy="250" rx="430" ry="115" fill="#1cd4b0" opacity=".20" filter="url(#hglow)"/>
+    <ellipse cx="550" cy="250" rx="300" ry="78" fill="#59c39b" opacity=".16" filter="url(#hglow)"/>
+  </svg>
   <div class="wrap">
+    <div class="glass">
+      <span class="g-tag">[ EST. 2021 ]</span>
+      <div class="g-head">Senior, <em>certified</em> delivery leadership</div>
+      <span class="g-desc">PMP · SAFe · CSM-certified leaders on every engagement, from day one.</span>
+    </div>
     <div class="mono eyebrow">Enterprise Technology Delivery · Est. 2021</div>
-    <h1 class="display">Technology delivery, <b>done right.</b></h1>
+    <h1 class="display">Technology delivery, done right<span class="dot">.</span></h1>
     <p>IT and management consulting for enterprises — program &amp; project management, Agile/SAFe delivery, ERP &amp; cloud transformation, and AI enablement.</p>
     <div class="btns">
-      <a href="#contact" class="btn btn-light">Start an engagement</a>
+      <a href="#contact" class="btn btn-accent">Start an engagement
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
       <a href="#services" class="btn btn-line">Explore services</a>
     </div>
   </div>
-  <div class="scroll-ind">
+  <div class="scroll-ind" aria-hidden="true">
     <div class="arrow"></div>
     <div class="mono">Scroll to explore</div>
   </div>
@@ -261,6 +343,30 @@
   <div class="wrap rv">
     <div class="mono eyebrow">What we do</div>
     <h2 class="display">We plan, lead, and ship complex technology programs — <em>on time, on budget, and built to last.</em></h2>
+  </div>
+</section>
+
+<!-- stats band -->
+<section class="stats" aria-label="Firm credentials">
+  <div class="wrap">
+    <div class="stat-grid rv">
+      <div class="stat">
+        <div class="stat-v"><span class="unit">Est.</span> 2021</div>
+        <div class="stat-l">Founded · Raleigh,<br>North Carolina</div>
+      </div>
+      <div class="stat">
+        <div class="stat-v"><span data-count="25">25</span><span class="sign">+</span></div>
+        <div class="stat-l">Enterprise programs<br>&amp; initiatives led</div>
+      </div>
+      <div class="stat">
+        <div class="stat-v"><span data-count="100">100</span><span class="sign">%</span></div>
+        <div class="stat-l">Senior-led · PMP, SAFe<br>&amp; CSM certified</div>
+      </div>
+      <div class="stat">
+        <div class="stat-v">1 <span class="unit">day</span></div>
+        <div class="stat-l">Business-day response<br>on every inquiry</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -319,7 +425,7 @@
 <section class="featured">
   <div class="bg"><img src="featured-3d.jpg" alt="Enterprise scale — 3D render"></div>
   <div class="scrim"></div>
-  <canvas class="fx" id="fxFeatured"></canvas>
+  <canvas class="fx" id="fxFeatured" aria-hidden="true"></canvas>
   <div class="wrap">
     <div class="mono eyebrow">Built for enterprise scale</div>
     <blockquote>Senior, certified delivery leadership — on every engagement, from day one.</blockquote>
@@ -358,10 +464,10 @@
         </ul>
       </div>
       <form class="rv" action="mailto:usman_khan@stktechnologiesconsulting.com" method="post" enctype="text/plain">
-        <div class="field"><label>Name</label><input type="text" name="Name" required></div>
-        <div class="field"><label>Company</label><input type="text" name="Company"></div>
-        <div class="field"><label>Email</label><input type="email" name="Email" required></div>
-        <div class="field"><label>How can we help?</label><textarea name="Message"></textarea></div>
+        <div class="field"><label for="f-name">Name</label><input id="f-name" type="text" name="Name" autocomplete="name" required></div>
+        <div class="field"><label for="f-company">Company</label><input id="f-company" type="text" name="Company" autocomplete="organization"></div>
+        <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" name="Email" autocomplete="email" required></div>
+        <div class="field"><label for="f-message">How can we help?</label><textarea id="f-message" name="Message"></textarea></div>
         <button type="submit" class="btn btn-light">Send message</button>
       </form>
     </div>
@@ -409,8 +515,18 @@
 
   // ---- mobile menu ----
   var burger=document.getElementById('burger'), menu=document.getElementById('menu');
-  burger.addEventListener('click',function(){ menu.classList.toggle('open'); });
-  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ menu.classList.remove('open'); }); });
+  function setMenu(open){
+    menu.classList.toggle('open',open);
+    burger.classList.toggle('open',open);
+    burger.setAttribute('aria-expanded',String(open));
+    burger.setAttribute('aria-label',open?'Close menu':'Open menu');
+    document.body.style.overflow=open?'hidden':'';
+  }
+  burger.addEventListener('click',function(){ setMenu(!menu.classList.contains('open')); });
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ setMenu(false); }); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&menu.classList.contains('open')){ setMenu(false); burger.focus(); }
+  });
 
   // ---- animated network graphic (scroll-reactive 3D point cloud) ----
   function network(canvas, opts){
@@ -459,21 +575,20 @@
     }
     resize(); window.addEventListener('resize',resize); frame();
   }
-  network(document.getElementById('fxHero'),     {count:78, link:128, line:'120,224,190', node:'225,245,238'});
   network(document.getElementById('fxFeatured'), {count:64, link:120, line:'89,195,155',  node:'200,236,222'});
 
-  // ---- scroll-scrubbed parallax / zoom on every image ----
-  var heroImg=document.getElementById('heroImg');
+  // ---- scroll-scrubbed parallax / zoom on capability images ----
   var capImgs=[].slice.call(document.querySelectorAll('.cap .visual img'));
   var ticking=false;
   function onScroll(){
     var y=window.scrollY, vh=window.innerHeight;
-    if(heroImg && y<1100) heroImg.style.transform='translateY('+(y*0.16)+'px) scale('+(1+y/9000)+')';
-    capImgs.forEach(function(img){
-      var r=img.parentNode.getBoundingClientRect();
-      var p=(vh - r.top)/(vh + r.height); p=p<0?0:p>1?1:p;   // 0..1 across the viewport
-      img.style.transform='translateY('+((p-0.5)*-46)+'px) scale('+(1.12 - p*0.06)+')';
-    });
+    if(!reduce){
+      capImgs.forEach(function(img){
+        var r=img.parentNode.getBoundingClientRect();
+        var p=(vh - r.top)/(vh + r.height); p=p<0?0:p>1?1:p;   // 0..1 across the viewport
+        img.style.transform='translateY('+((p-0.5)*-46)+'px) scale('+(1.12 - p*0.06)+')';
+      });
+    }
     // nav hide on scroll-down
     navShell.style.top = (y>lastY && y>180) ? '-90px' : '18px'; lastY=y;
     ticking=false;
@@ -487,6 +602,40 @@
     es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
   },{threshold:.15});
   document.querySelectorAll('.rv').forEach(function(n){ io.observe(n); });
+
+  // ---- stat count-up (markup holds final values; animation is purely visual) ----
+  (function(){
+    var counters=[].slice.call(document.querySelectorAll('.stat-v [data-count]'));
+    if(!counters.length || reduce || !('IntersectionObserver' in window)) return;
+    function animate(el){
+      var end=parseInt(el.getAttribute('data-count'),10), dur=1300, t0=null;
+      function tick(ts){
+        if(t0===null) t0=ts;
+        var p=Math.min((ts-t0)/dur,1);
+        p=1-Math.pow(1-p,3); // ease-out cubic
+        el.textContent=Math.round(end*p);
+        if(p<1) requestAnimationFrame(tick); else el.textContent=end;
+      }
+      requestAnimationFrame(tick);
+    }
+    var cio=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ cio.unobserve(e.target); animate(e.target); } });
+    },{threshold:.5});
+    counters.forEach(function(el){ el.textContent='0'; cio.observe(el); });
+  })();
+
+  // ---- HLS background video (enableWorker:false for stability) ----
+  (function(){
+    var v=document.getElementById('heroVid'); if(!v) return;
+    var src='https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8';
+    function play(){ if(!reduce) v.play().catch(function(){}); } // honor prefers-reduced-motion: hold on first frame
+    if(window.Hls && window.Hls.isSupported()){
+      var hls=new Hls({enableWorker:false}); hls.loadSource(src); hls.attachMedia(v);
+      hls.on(Hls.Events.MANIFEST_PARSED,play);
+    } else if(v.canPlayType('application/vnd.apple.mpegurl')){
+      v.src=src; v.addEventListener('loadedmetadata',play);
+    }
+  })();
 </script>
 </body>
 </html>
