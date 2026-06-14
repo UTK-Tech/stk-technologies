@@ -9,7 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
 <style>
   :root{
     --teal:#052424; --teal2:#073230; --teal3:#0a3a37;
@@ -90,36 +92,31 @@
   .scroll-ind .arrow{width:1px;height:34px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.7));animation:drop 1.8s ease-in-out infinite}
   @keyframes drop{0%,100%{transform:scaleY(.4);transform-origin:top;opacity:.4}50%{transform:scaleY(1);opacity:1}}
 
-  /* ===== hero: video + liquid glass refresh ===== */
+  /* ===== hero: interactive 3D network mesh ===== */
   .hero{align-items:center;text-align:center}
-  .hero video.bgvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.6}
-  .hero .grad-l{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,var(--teal) 0%,rgba(5,36,36,.45) 38%,transparent 72%)}
-  .hero .grad-b{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,var(--teal) 0%,rgba(5,36,36,.55) 24%,transparent 60%)}
+  /* live WebGL canvas — the centerpiece */
+  .hero canvas.heroGL{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;
+    opacity:0;transition:opacity 1.1s ease;cursor:grab}
+  .hero canvas.heroGL.ready{opacity:1}
+  .hero canvas.heroGL:active{cursor:grabbing}
+  /* radial scrim keeps headline legible over the mesh; bottom fade blends into next section */
+  .hero .scrim-c{position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:radial-gradient(ellipse 56% 46% at 50% 50%,rgba(5,36,36,.50),rgba(5,36,36,.08) 62%,transparent 80%)}
+  .hero .grad-b{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(0deg,var(--teal) 0%,rgba(5,36,36,.55) 22%,transparent 56%)}
   .hero .gridlines{position:absolute;inset:0;z-index:2;pointer-events:none}
-  .hero .gridlines i{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.10)}
-  .hero .glow{position:absolute;left:50%;top:5%;transform:translateX(-50%);z-index:1;pointer-events:none;max-width:none}
-  .hero .wrap{display:flex;flex-direction:column;align-items:center;padding-bottom:0}
+  .hero .gridlines i{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.06)}
+  .hero .glow{position:absolute;left:50%;top:5%;transform:translateX(-50%);z-index:0;pointer-events:none;max-width:none}
+  .hero .wrap{display:flex;flex-direction:column;align-items:center;padding-bottom:0;will-change:transform,opacity}
   .hero .eyebrow{margin-bottom:18px}
-  .hero h1{font-size:clamp(40px,6.4vw,72px);font-weight:800;text-transform:uppercase;letter-spacing:-.02em;max-width:16ch}
+  .hero h1{font-size:clamp(40px,6.4vw,76px);font-weight:800;text-transform:uppercase;letter-spacing:-.02em;max-width:16ch;
+    text-shadow:0 2px 40px rgba(0,0,0,.45)}
   .hero h1 .dot{color:var(--accent)}
-  .hero p{margin-left:auto;margin-right:auto;max-width:512px;font-size:14px;color:rgba(255,255,255,.72)}
+  .hero p{margin-left:auto;margin-right:auto;max-width:512px;font-size:14px;color:rgba(255,255,255,.78);text-shadow:0 1px 18px rgba(0,0,0,.4)}
   .hero .btns{justify-content:center}
   .btn-accent{background:var(--accent);color:var(--teal);text-transform:uppercase;font-family:'Geist Mono',monospace;
     letter-spacing:.12em;font-weight:600;font-size:12px;display:inline-flex;align-items:center;gap:9px}
   .btn-accent:hover{transform:translateY(-2px);filter:brightness(1.06)}
-
-  .glass{position:relative;width:200px;height:200px;border-radius:22px;margin-bottom:34px;transform:translateY(-50px);
-    background:rgba(255,255,255,.01);background-blend-mode:luminosity;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
-    box-shadow:inset 0 1px 1px rgba(255,255,255,.1);display:flex;flex-direction:column;justify-content:space-between;padding:20px;text-align:left}
-  .glass::before{content:"";position:absolute;inset:0;padding:1.4px;border-radius:inherit;
-    background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.04));
-    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
-  .glass .g-tag{font-family:'Geist Mono',monospace;font-size:14px;letter-spacing:.12em;color:rgba(255,255,255,.72)}
-  .glass .g-head{font-size:18px;font-weight:600;line-height:1.25;color:#fff}
-  .glass .g-head em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400}
-  .glass .g-desc{font-size:11px;line-height:1.5;color:rgba(255,255,255,.55)}
-  @media(max-width:900px){.hero .gridlines,.hero .glow{display:none}}
+  @media(max-width:900px){.hero .gridlines{display:none}}
 
   /* ===== trusted strip ===== */
   .trusted{background:var(--cream);color:var(--on-cream);padding:46px 0}
@@ -289,21 +286,16 @@
 
 <!-- hero -->
 <section class="hero" id="main">
-  <video class="bgvid" id="heroVid" muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
-  <div class="grad-l" aria-hidden="true"></div>
-  <div class="grad-b" aria-hidden="true"></div>
-  <div class="gridlines" aria-hidden="true"><i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i></div>
   <svg class="glow" width="1100" height="500" viewBox="0 0 1100 500" aria-hidden="true">
     <defs><filter id="hglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="25"/></filter></defs>
     <ellipse cx="550" cy="250" rx="430" ry="115" fill="#1cd4b0" opacity=".20" filter="url(#hglow)"/>
     <ellipse cx="550" cy="250" rx="300" ry="78" fill="#59c39b" opacity=".16" filter="url(#hglow)"/>
   </svg>
-  <div class="wrap">
-    <div class="glass">
-      <span class="g-tag">[ EST. 2021 ]</span>
-      <div class="g-head">Senior, <em>certified</em> delivery leadership</div>
-      <span class="g-desc">PMP · SAFe · CSM-certified leaders on every engagement, from day one.</span>
-    </div>
+  <canvas class="heroGL" id="heroGL" aria-hidden="true"></canvas>
+  <div class="scrim-c" aria-hidden="true"></div>
+  <div class="grad-b" aria-hidden="true"></div>
+  <div class="gridlines" aria-hidden="true"><i style="left:25%"></i><i style="left:50%"></i><i style="left:75%"></i></div>
+  <div class="wrap" id="heroWrap">
     <div class="mono eyebrow">Enterprise Technology Delivery · Est. 2021</div>
     <h1 class="display">Technology delivery, done right<span class="dot">.</span></h1>
     <p>IT and management consulting for enterprises — program &amp; project management, Agile/SAFe delivery, ERP &amp; cloud transformation, and AI enablement.</p>
@@ -579,6 +571,7 @@
 
   // ---- scroll-scrubbed parallax / zoom on capability images ----
   var capImgs=[].slice.call(document.querySelectorAll('.cap .visual img'));
+  var heroWrap=document.getElementById('heroWrap');
   var ticking=false;
   function onScroll(){
     var y=window.scrollY, vh=window.innerHeight;
@@ -588,6 +581,12 @@
         var p=(vh - r.top)/(vh + r.height); p=p<0?0:p>1?1:p;   // 0..1 across the viewport
         img.style.transform='translateY('+((p-0.5)*-46)+'px) scale('+(1.12 - p*0.06)+')';
       });
+      // hero content drifts up and fades as you scroll past it
+      if(heroWrap){
+        var hp=Math.min(y/(vh*0.85),1);
+        heroWrap.style.transform='translateY('+(hp*64)+'px)';
+        heroWrap.style.opacity=String(1-hp*0.92);
+      }
     }
     // nav hide on scroll-down
     navShell.style.top = (y>lastY && y>180) ? '-90px' : '18px'; lastY=y;
@@ -623,18 +622,116 @@
     },{threshold:.5});
     counters.forEach(function(el){ el.textContent='0'; cio.observe(el); });
   })();
+</script>
 
-  // ---- HLS background video (enableWorker:false for stability) ----
+<!-- ===== interactive 3D network mesh (hero centerpiece) ===== -->
+<script type="module">
+  import * as THREE from 'three';
+
   (function(){
-    var v=document.getElementById('heroVid'); if(!v) return;
-    var src='https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8';
-    function play(){ if(!reduce) v.play().catch(function(){}); } // honor prefers-reduced-motion: hold on first frame
-    if(window.Hls && window.Hls.isSupported()){
-      var hls=new Hls({enableWorker:false}); hls.loadSource(src); hls.attachMedia(v);
-      hls.on(Hls.Events.MANIFEST_PARSED,play);
-    } else if(v.canPlayType('application/vnd.apple.mpegurl')){
-      v.src=src; v.addEventListener('loadedmetadata',play);
+    var canvas = document.getElementById('heroGL');
+    if(!canvas) return;
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+    var renderer;
+    try{
+      renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true, alpha:true, powerPreference:'high-performance'});
+    }catch(e){ return; } // WebGL unavailable -> brand background shows, page still works
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+
+    var scene  = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
+    camera.position.set(0,0,4.2);
+
+    var group = new THREE.Group();
+    scene.add(group);
+
+    // --- generate nodes on a fibonacci sphere with radial jitter (gives volume) ---
+    var N = 168, nodes = [], pos = [], i, j;
+    var GA = Math.PI * (1 + Math.sqrt(5)); // golden angle
+    for(i=0;i<N;i++){
+      var k = i + 0.5;
+      var phi = Math.acos(1 - 2*k/N);
+      var theta = GA * k;
+      var r = 1.35 * (0.70 + Math.random()*0.30);
+      var x = r*Math.sin(phi)*Math.cos(theta);
+      var y = r*Math.sin(phi)*Math.sin(theta);
+      var z = r*Math.cos(phi);
+      nodes.push(new THREE.Vector3(x,y,z));
+      pos.push(x,y,z);
     }
+
+    // --- nodes as glowing points ---
+    var ptGeo = new THREE.BufferGeometry();
+    ptGeo.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+    var ptMat = new THREE.PointsMaterial({color:0xd6f3e6, size:0.072, transparent:true, opacity:0.98,
+      blending:THREE.AdditiveBlending, depthWrite:false, sizeAttenuation:true});
+    group.add(new THREE.Points(ptGeo, ptMat));
+
+    // --- edges precomputed by 3D proximity (cheap: just rotated each frame) ---
+    var edges = [], TH = 0.60;
+    for(i=0;i<N;i++) for(j=i+1;j<N;j++){
+      if(nodes[i].distanceTo(nodes[j]) < TH){
+        edges.push(nodes[i].x,nodes[i].y,nodes[i].z, nodes[j].x,nodes[j].y,nodes[j].z);
+      }
+    }
+    var lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(edges,3));
+    var lineMat = new THREE.LineBasicMaterial({color:0x59c39b, transparent:true, opacity:0.42,
+      blending:THREE.AdditiveBlending, depthWrite:false});
+    group.add(new THREE.LineSegments(lineGeo, lineMat));
+    group.scale.setScalar(1.18);
+
+    // --- a few brighter "pulse" satellites for depth ---
+    var coreGeo = new THREE.IcosahedronGeometry(0.16, 1);
+    var coreMat = new THREE.MeshBasicMaterial({color:0x59c39b, wireframe:true, transparent:true, opacity:0.5});
+    var core = new THREE.Mesh(coreGeo, coreMat);
+    group.add(core);
+
+    function resize(){
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      if(!w || !h) return;
+      renderer.setSize(w,h,false);
+      camera.aspect = w/h; camera.updateProjectionMatrix();
+    }
+    resize(); window.addEventListener('resize', resize);
+
+    // --- pointer parallax (eased) ---
+    var tmx=0,tmy=0, mx=0,my=0;
+    window.addEventListener('mousemove', function(e){
+      tmx = (e.clientX/window.innerWidth  - 0.5);
+      tmy = (e.clientY/window.innerHeight - 0.5);
+    }, {passive:true});
+
+    function draw(){
+      group.rotation.y = t*0.12 + mx*0.55 + window.scrollY*0.0009;
+      group.rotation.x = 0.12 + my*0.40 + window.scrollY*0.00035;
+      core.rotation.y = -t*0.4; core.rotation.x = t*0.3;
+      camera.position.x = mx*0.5;
+      camera.position.y = -my*0.35;
+      camera.lookAt(0,0,0);
+      renderer.render(scene, camera);
+    }
+
+    // --- run only while hero is on screen; honor reduced-motion ---
+    var t=0, visible=true, running=false;
+    function start(){ if(running || reduce) return; running=true; requestAnimationFrame(loop); }
+    function loop(){
+      if(reduce || !visible){ running=false; return; }
+      t += 0.016;
+      mx += (tmx-mx)*0.05; my += (tmy-my)*0.05;
+      draw();
+      requestAnimationFrame(loop);
+    }
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){
+        visible = es[0].isIntersecting;
+        if(visible) start();
+      }, {threshold:0.01}).observe(canvas);
+    }
+
+    // reveal the canvas once the first frame is painted
+    requestAnimationFrame(function(){ resize(); draw(); canvas.classList.add('ready'); if(!reduce) start(); });
   })();
 </script>
 </body>
