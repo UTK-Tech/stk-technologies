@@ -224,7 +224,21 @@
   /* reveal */
   .rv{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
   .rv.in{opacity:1;transform:none}
+
+  /* scroll-progress bar */
+  .progress{position:fixed;top:0;left:0;height:2px;width:100%;z-index:300;transform-origin:0 50%;transform:scaleX(0);
+    background:linear-gradient(90deg,var(--accent),#bfe9d8);box-shadow:0 0 14px rgba(89,195,155,.55);will-change:transform}
+  /* active section in nav (scroll-spy) */
+  .nav-links a.active{color:#fff;background:rgba(255,255,255,.09)}
+  /* hero load-in choreography */
+  .hero .wrap > *{opacity:0;transform:translateY(22px);animation:heroIn .9s cubic-bezier(.2,.7,.2,1) both}
+  .hero .eyebrow{animation-delay:.15s} .hero h1{animation-delay:.30s}
+  .hero p{animation-delay:.48s} .hero .btns{animation-delay:.62s}
+  @keyframes heroIn{to{opacity:1;transform:none}}
+
   @media(prefers-reduced-motion:reduce){
+    .progress{display:none}
+    .hero .wrap > *{opacity:1;transform:none;animation:none}
     html{scroll-behavior:auto}
     .rv{opacity:1;transform:none;transition:none}
     .cap .visual::after{animation:none}
@@ -254,6 +268,7 @@
 <body>
 
 <a class="skip" href="#main">Skip to content</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
 
 <!-- nav -->
 <div class="nav-shell" id="navShell">
@@ -317,7 +332,7 @@
   <div class="wrap">
     <div class="row">
       <div class="mono">Trusted across enterprise verticals</div>
-      <div class="marks">
+      <div class="marks" data-stagger>
         <span>Finance</span><span class="dot">·</span>
         <span>Media</span><span class="dot">·</span>
         <span>Healthcare</span><span class="dot">·</span>
@@ -341,7 +356,7 @@
 <!-- stats band -->
 <section class="stats" aria-label="Firm credentials">
   <div class="wrap">
-    <div class="stat-grid rv">
+    <div class="stat-grid rv" data-stagger>
       <div class="stat">
         <div class="stat-v"><span class="unit">Est.</span> 2021</div>
         <div class="stat-l">Founded · Raleigh,<br>North Carolina</div>
@@ -371,9 +386,9 @@
       <div class="num">Capability 01</div>
       <h3>Program &amp; Project Management</h3>
       <p>End-to-end delivery leadership across cross-functional teams — disciplined planning, risk management, and executive reporting that keep high-stakes initiatives on track.</p>
-      <div class="tags"><span class="tag">PMO</span><span class="tag">Roadmaps</span><span class="tag">Risk</span><span class="tag">Governance</span></div>
+      <div class="tags" data-stagger><span class="tag">PMO</span><span class="tag">Roadmaps</span><span class="tag">Risk</span><span class="tag">Governance</span></div>
     </div>
-    <div class="visual"><img src="img-ai-cube.jpg" alt="Program delivery"></div>
+    <div class="visual"><img src="img-ai-cube.jpg" alt="Program delivery" loading="lazy" decoding="async"></div>
   </div></div>
 </section>
 
@@ -383,9 +398,9 @@
       <div class="num">Capability 02</div>
       <h3>Agile &amp; SAFe Delivery</h3>
       <p>Scrum, SAFe, and hybrid delivery at enterprise scale — backlog management, PI planning, and release cadences that keep teams shipping predictably.</p>
-      <div class="tags"><span class="tag">Scrum</span><span class="tag">SAFe</span><span class="tag">PI Planning</span><span class="tag">CI/CD</span></div>
+      <div class="tags" data-stagger><span class="tag">Scrum</span><span class="tag">SAFe</span><span class="tag">PI Planning</span><span class="tag">CI/CD</span></div>
     </div>
-    <div class="visual"><img src="cap-helix.jpg" alt="Agile delivery"></div>
+    <div class="visual"><img src="cap-helix.jpg" alt="Agile delivery" loading="lazy" decoding="async"></div>
   </div></div>
 </section>
 
@@ -395,9 +410,9 @@
       <div class="num">Capability 03</div>
       <h3>ERP &amp; Cloud Transformation</h3>
       <p>Modernization and integration programs across ERP, cloud, and enterprise data platforms — migrating critical systems with minimal disruption.</p>
-      <div class="tags"><span class="tag">ERP</span><span class="tag">Cloud</span><span class="tag">Migration</span><span class="tag">Data</span></div>
+      <div class="tags" data-stagger><span class="tag">ERP</span><span class="tag">Cloud</span><span class="tag">Migration</span><span class="tag">Data</span></div>
     </div>
-    <div class="visual"><img src="cap-voxel.jpg" alt="Cloud transformation"></div>
+    <div class="visual"><img src="cap-voxel.jpg" alt="Cloud transformation" loading="lazy" decoding="async"></div>
   </div></div>
 </section>
 
@@ -407,15 +422,15 @@
       <div class="num">Capability 04</div>
       <h3>AI Enablement</h3>
       <p>Bringing GenAI and automation into business workflows with a focus on measurable outcomes, governance, and responsible adoption.</p>
-      <div class="tags"><span class="tag">GenAI</span><span class="tag">Automation</span><span class="tag">LLMOps</span><span class="tag">Governance</span></div>
+      <div class="tags" data-stagger><span class="tag">GenAI</span><span class="tag">Automation</span><span class="tag">LLMOps</span><span class="tag">Governance</span></div>
     </div>
-    <div class="visual"><img src="ai-consulting.jpg" alt="AI enablement"></div>
+    <div class="visual"><img src="ai-consulting.jpg" alt="AI enablement" loading="lazy" decoding="async"></div>
   </div></div>
 </section>
 
 <!-- featured band -->
 <section class="featured">
-  <div class="bg"><img src="featured-3d.jpg" alt="Enterprise scale — 3D render"></div>
+  <div class="bg"><img src="featured-3d.jpg" alt="Enterprise scale — 3D render" loading="lazy" decoding="async"></div>
   <div class="scrim"></div>
   <canvas class="fx" id="fxFeatured" aria-hidden="true"></canvas>
   <div class="wrap">
@@ -433,7 +448,7 @@
   <div class="wrap">
     <div class="mono eyebrow rv">How we work</div>
     <h2 class="display rv">A disciplined delivery loop, repeated until it's sustainable.</h2>
-    <div class="steps rv">
+    <div class="steps rv" data-stagger>
       <div class="step"><div class="n">01 / Discover</div><h4>Discover</h4><p>Assess scope, stakeholders, risks, and the current-state architecture.</p></div>
       <div class="step"><div class="n">02 / Plan</div><h4>Plan</h4><p>Roadmap, delivery model, and KPIs with a governance cadence aligned to outcomes.</p></div>
       <div class="step"><div class="n">03 / Deliver</div><h4>Deliver</h4><p>Lead execution across teams with transparent tracking and active risk management.</p></div>
@@ -575,6 +590,15 @@
   var ticking=false;
   function onScroll(){
     var y=window.scrollY, vh=window.innerHeight;
+    // scroll-progress bar
+    var docH=document.documentElement.scrollHeight - vh;
+    if(progressEl) progressEl.style.transform='scaleX('+(docH>0?(y/docH):0).toFixed(4)+')';
+    // scroll-spy: highlight the section currently in view
+    if(spyMap){
+      var mid=y+vh*0.35, act=null;
+      spyMap.forEach(function(s){ if(s.el && s.el.offsetTop<=mid) act=s.a; });
+      spyLinks.forEach(function(a){ a.classList.toggle('active', a===act); });
+    }
     if(!reduce){
       // hero content drifts up and fades as you scroll past it
       if(heroWrap){
@@ -588,8 +612,33 @@
     ticking=false;
   }
   var lastY=0, navShell=document.getElementById('navShell');
+  var progressEl=document.getElementById('progress');
+  var spyLinks=[].slice.call(document.querySelectorAll('.nav-links a'));
+  var spyMap=spyLinks.map(function(a){ var id=a.getAttribute('href'); return {a:a, el:(id&&id.charAt(0)==='#')?document.querySelector(id):null}; });
   window.addEventListener('scroll',function(){ if(!ticking){ ticking=true; requestAnimationFrame(onScroll);} },{passive:true});
   onScroll();
+
+  // ---- staggered reveal for grouped items (cascade children in) ----
+  (function(){
+    var groups=[].slice.call(document.querySelectorAll('[data-stagger]'));
+    if(!groups.length) return;
+    if(reduce || !('IntersectionObserver' in window)) return; // no-JS / reduced-motion: content stays visible
+    groups.forEach(function(g){
+      var kids=[].slice.call(g.children);
+      kids.forEach(function(k){
+        k.style.opacity='0'; k.style.transform='translateY(16px)';
+        k.style.transition='opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)';
+      });
+      var o=new IntersectionObserver(function(es){
+        es.forEach(function(e){
+          if(!e.isIntersecting) return;
+          kids.forEach(function(k,i){ setTimeout(function(){ k.style.opacity='1'; k.style.transform='none'; }, i*55); });
+          o.unobserve(e.target);
+        });
+      },{threshold:.2});
+      o.observe(g);
+    });
+  })();
 
   // ---- capability renders: continuous float + drift + scale "breathing" + pointer tilt ----
   (function(){
