@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Portal — STK Technologies LLC</title>
+<meta name="description" content="Secure client portal for STK Technologies LLC engagements — project status, milestones, invoices, and deliverables.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23052424'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='18' font-weight='700' fill='%2359c39b' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#052424; --teal2:#073230; --teal3:#0a3a37;
+    --cream:#f1ece1; --cream2:#e8e1d3;
+    --white:#ffffff; --accent:#59c39b;
+    --on-dark:#e7efed; --mut-dark:rgba(231,239,237,.60);
+    --on-cream:#0d1f1e; --mut-cream:#5b6c67;
+    --line-dark:rgba(255,255,255,.14); --line-cream:rgba(5,36,36,.14);
+    --amber:#e8c268; --red:#e88a7a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-font-smoothing:antialiased}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--teal);color:var(--on-dark);line-height:1.6;overflow-x:hidden;min-height:100vh}
+  a{text-decoration:none;color:inherit}
+  button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+  .mono{font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:.2em;font-size:11.5px;font-weight:500}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  input:focus-visible{outline:none}
+
+  /* ===== background texture ===== */
+  .bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .bg-grid i{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.05)}
+  .bg-glow{position:fixed;left:50%;top:-30%;transform:translateX(-50%);z-index:0;pointer-events:none;
+    width:900px;height:700px;border-radius:50%;
+    background:radial-gradient(ellipse,rgba(89,195,155,.10),transparent 65%)}
+
+  /* ===== logo ===== */
+  .logo{display:flex;align-items:center;gap:11px;font-weight:600;font-size:16px;letter-spacing:-.01em;color:#fff}
+  .logo .glyph{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-weight:700;color:var(--teal);
+    background:linear-gradient(135deg,#fff,#bfe9d8);font-size:15px}
+  .logo .tag{font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent);border:1px solid rgba(89,195,155,.35);padding:3px 9px;border-radius:999px;margin-left:2px}
+
+  /* ===== gate (login) ===== */
+  #gate{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px}
+  .gate-card{width:100%;max-width:420px;border-radius:22px;padding:38px 34px 32px;
+    background:rgba(7,33,31,.62);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px) saturate(1.2);
+    box-shadow:0 24px 80px rgba(0,0,0,.38)}
+  .gate-card .logo{justify-content:center;margin-bottom:26px}
+  .gate-card .eyebrow{color:var(--accent);text-align:center;margin-bottom:10px}
+  .gate-card h1{font-size:26px;font-weight:300;letter-spacing:-.02em;color:#fff;text-align:center;margin-bottom:6px}
+  .gate-card .sub{font-size:13.5px;color:var(--mut-dark);text-align:center;margin-bottom:28px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut-dark);margin-bottom:8px}
+  .field input{width:100%;font-family:inherit;font-size:15px;color:#fff;background:rgba(255,255,255,.04);
+    border:1px solid var(--line-dark);border-radius:12px;padding:14px 16px;transition:.18s}
+  .field input:focus{border-color:var(--accent);background:rgba(255,255,255,.07)}
+  .field input::placeholder{color:rgba(231,239,237,.32)}
+  .gate-btn{width:100%;border:none;margin-top:8px;font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:.14em;
+    font-size:12px;font-weight:600;padding:15px 18px;border-radius:999px;background:#fff;color:var(--teal);transition:.18s}
+  .gate-btn:hover{background:var(--accent)}
+  .gate-err{display:none;margin-top:14px;font-size:13px;color:var(--red);text-align:center}
+  .gate-err.show{display:block}
+  .gate-foot{margin-top:26px;text-align:center;font-size:13px;color:var(--mut-dark)}
+  .gate-foot a{color:var(--accent)}
+  .gate-foot a:hover{text-decoration:underline}
+  .gate-back{position:relative;z-index:2;margin-top:26px;font-size:13px;color:var(--mut-dark);display:inline-flex;gap:8px;align-items:center;transition:.16s}
+  .gate-back:hover{color:#fff}
+
+  /* ===== portal shell ===== */
+  #portal{display:none;position:relative;z-index:2;min-height:100vh;padding-bottom:60px}
+  .pnav-shell{position:sticky;top:18px;z-index:100;display:flex;justify-content:center;padding:18px 18px 0}
+  .pnav{width:100%;max-width:1180px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:11px 12px 11px 22px;border-radius:999px;
+    background:rgba(7,33,31,.72);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(16px) saturate(1.2);
+    box-shadow:0 10px 40px rgba(0,0,0,.28)}
+  .ptabs{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+  .ptabs button{border:none;background:none;padding:9px 15px;border-radius:999px;font-size:13.5px;color:var(--mut-dark);transition:.18s}
+  .ptabs button:hover{color:#fff;background:rgba(255,255,255,.07)}
+  .ptabs button.active{color:#fff;background:rgba(255,255,255,.10)}
+  .pnav .out{font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:500;
+    padding:10px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:none;color:var(--on-dark);transition:.18s}
+  .pnav .out:hover{border-color:#fff;background:rgba(255,255,255,.06)}
+
+  /* header band */
+  .phead{padding:64px 0 44px}
+  .phead .eyebrow{color:var(--accent);margin-bottom:16px}
+  .phead h1{font-size:clamp(30px,4.6vw,54px);font-weight:300;letter-spacing:-.025em;line-height:1.06;color:#fff}
+  .phead h1 b{font-weight:500}
+  .phead .meta{margin-top:14px;color:var(--mut-dark);font-size:14.5px}
+
+  /* stat band */
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-bottom:64px}
+  .stat{border-top:1px solid var(--line-dark);padding-top:20px;transition:border-color .4s ease}
+  .stat:hover{border-top-color:rgba(89,195,155,.5)}
+  .stat-v{font-weight:300;letter-spacing:-.02em;line-height:1.1;font-size:clamp(20px,2.2vw,28px);color:#fff;margin-bottom:8px}
+  .stat-v .ok{color:var(--accent)}
+  .stat-l{font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--mut-dark);line-height:1.8}
+
+  /* panels */
+  .panel{display:none}
+  .panel.active{display:block;animation:fadeIn .45s cubic-bezier(.2,.7,.2,1)}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .sect-title{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+  .sect-title h2{font-size:clamp(22px,2.6vw,32px);font-weight:300;letter-spacing:-.02em;color:#fff}
+  .sect-title .mono{color:var(--mut-dark)}
+
+  /* milestone timeline */
+  .miles{list-style:none;border-left:1px solid var(--line-dark);margin-left:8px;padding-left:0}
+  .miles li{position:relative;padding:0 0 30px 30px}
+  .miles li:last-child{padding-bottom:6px}
+  .miles .dot{position:absolute;left:-8px;top:5px;width:15px;height:15px;border-radius:999px;border:1px solid var(--line-dark);
+    background:var(--teal2);display:grid;place-items:center}
+  .miles .dot::after{content:"";width:5px;height:5px;border-radius:999px;background:rgba(255,255,255,.25)}
+  .miles li.done .dot{border-color:var(--accent);background:rgba(89,195,155,.14)}
+  .miles li.done .dot::after{background:var(--accent)}
+  .miles li.now .dot{border-color:var(--amber);background:rgba(232,194,104,.12)}
+  .miles li.now .dot::after{background:var(--amber)}
+  .miles h4{font-size:16.5px;font-weight:500;color:#fff}
+  .miles .when{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut-dark);margin:3px 0 5px}
+  .miles p{font-size:14px;color:var(--mut-dark);max-width:60ch}
+
+  /* generic card rows (invoices, docs) */
+  .rows{border-top:1px solid var(--line-dark)}
+  .row{display:grid;gap:10px 22px;align-items:center;padding:20px 4px;border-bottom:1px solid var(--line-dark);transition:background .2s}
+  .row:hover{background:rgba(255,255,255,.025)}
+  .row .id{font-family:'Geist Mono',monospace;font-size:12.5px;letter-spacing:.06em;color:var(--accent)}
+  .row .ttl{font-size:15.5px;font-weight:500;color:#fff}
+  .row .sub{font-size:13px;color:var(--mut-dark)}
+  .row .amt{font-size:16px;font-weight:500;color:#fff;font-variant-numeric:tabular-nums}
+  .row-inv{grid-template-columns:110px 1.6fr 1fr 110px 110px}
+  .row-doc{grid-template-columns:96px 1.8fr 1fr 130px}
+  .pill{display:inline-flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:10.5px;
+    letter-spacing:.1em;text-transform:uppercase;padding:6px 13px;border-radius:999px;border:1px solid var(--line-dark);white-space:nowrap}
+  .pill.paid{color:var(--accent);border-color:rgba(89,195,155,.4);background:rgba(89,195,155,.07)}
+  .pill.due{color:var(--amber);border-color:rgba(232,194,104,.4);background:rgba(232,194,104,.07)}
+  .pill.overdue{color:var(--red);border-color:rgba(232,138,122,.4);background:rgba(232,138,122,.07)}
+  .pill.doc{color:var(--mut-dark)}
+  .row-act{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;
+    padding:9px 15px;border-radius:999px;background:#fff;color:var(--teal);text-align:center;transition:.18s;border:none}
+  .row-act:hover{background:var(--accent)}
+  .row-act.line{background:none;border:1px solid rgba(255,255,255,.25);color:var(--on-dark)}
+  .row-act.line:hover{border-color:#fff;background:rgba(255,255,255,.06)}
+  .empty{padding:34px 4px;color:var(--mut-dark);font-size:14.5px;border-bottom:1px solid var(--line-dark)}
+
+  /* support cards */
+  .sup-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .sup-card{border:1px solid var(--line-dark);border-radius:18px;padding:30px 28px;background:rgba(255,255,255,.02);transition:border-color .3s}
+  .sup-card:hover{border-color:rgba(89,195,155,.35)}
+  .sup-card .mono{color:var(--accent);margin-bottom:14px}
+  .sup-card h3{font-size:20px;font-weight:500;color:#fff;margin-bottom:8px}
+  .sup-card p{font-size:14.5px;color:var(--mut-dark);margin-bottom:18px}
+  .sup-card a.row-act{display:inline-block}
+
+  /* footer strip */
+  .pfoot{margin-top:80px;padding-top:26px;border-top:1px solid var(--line-dark);display:flex;justify-content:space-between;
+    flex-wrap:wrap;gap:12px;color:var(--mut-dark);font-size:13px}
+  .pfoot a:hover{color:var(--accent)}
+
+  @media(prefers-reduced-motion:reduce){
+    .panel.active{animation:none}
+    .row,.stat,.sup-card,.ptabs button,.row-act,.gate-btn{transition:none}
+  }
+  @media(max-width:900px){
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .sup-grid{grid-template-columns:1fr}
+    .row-inv{grid-template-columns:1fr 110px;grid-template-areas:"a b" "c d"}
+    .row-doc{grid-template-columns:1fr 130px}
+    .pnav{padding-left:16px}
+    .logo .tag{display:none}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 20px}
+    .ptabs button{padding:8px 11px;font-size:12.5px}
+    .pnav .out{display:none}
+    .row-inv,.row-doc{grid-template-columns:1fr;grid-template-areas:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid" aria-hidden="true">
+  <i style="left:16.6%"></i><i style="left:33.3%"></i><i style="left:50%"></i><i style="left:66.6%"></i><i style="left:83.3%"></i>
+</div>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<!-- ============ ACCESS GATE ============ -->
+<section id="gate">
+  <form class="gate-card" id="gateForm" autocomplete="off">
+    <a href="/" class="logo"><span class="glyph" aria-hidden="true">S</span> STK Technologies</a>
+    <p class="mono eyebrow">Client Portal</p>
+    <h1>Welcome back</h1>
+    <p class="sub">Enter the access code from your engagement letter to view project status, invoices, and deliverables.</p>
+    <div class="field">
+      <label for="gEmail">Work email</label>
+      <input id="gEmail" type="email" placeholder="you@company.com" required>
+    </div>
+    <div class="field">
+      <label for="gCode">Access code</label>
+      <input id="gCode" type="text" placeholder="STK-XXXX" required spellcheck="false" autocapitalize="characters">
+    </div>
+    <button class="gate-btn" type="submit">Enter portal →</button>
+    <p class="gate-err" id="gateErr" role="alert">That code wasn’t recognized. Check your engagement letter or contact your STK lead.</p>
+    <p class="gate-foot">Don’t have a code? <a href="mailto:usman_khan@stktechnologiesconsulting.com?subject=Portal%20access%20request">Request access</a></p>
+  </form>
+  <a class="gate-back" href="/">← Back to stktechnologiesconsulting.com</a>
+</section>
+
+<!-- ============ PORTAL ============ -->
+<main id="portal">
+  <div class="pnav-shell">
+    <nav class="pnav" aria-label="Portal">
+      <a href="/" class="logo"><span class="glyph" aria-hidden="true">S</span> STK Technologies <span class="tag">Portal</span></a>
+      <div class="ptabs" role="tablist">
+        <button data-tab="overview" class="active" role="tab" aria-selected="true">Overview</button>
+        <button data-tab="invoices" role="tab" aria-selected="false">Invoices</button>
+        <button data-tab="documents" role="tab" aria-selected="false">Documents</button>
+        <button data-tab="support" role="tab" aria-selected="false">Support</button>
+      </div>
+      <button class="out" id="signOut">Sign out</button>
+    </nav>
+  </div>
+
+  <div class="wrap">
+    <header class="phead">
+      <p class="mono eyebrow" id="hEyebrow">Engagement</p>
+      <h1>Welcome back, <b id="hName">—</b></h1>
+      <p class="meta" id="hMeta"></p>
+    </header>
+
+    <div class="stat-grid" id="statGrid"></div>
+
+    <!-- overview -->
+    <section class="panel active" id="panel-overview">
+      <div class="sect-title"><h2>Milestones</h2><span class="mono" id="msCount"></span></div>
+      <ul class="miles" id="msList"></ul>
+    </section>
+
+    <!-- invoices -->
+    <section class="panel" id="panel-invoices">
+      <div class="sect-title"><h2>Invoices</h2><span class="mono" id="invCount"></span></div>
+      <div class="rows" id="invRows"></div>
+      <p style="margin-top:22px;font-size:13.5px;color:var(--mut-dark)">Payments are processed securely. To pay by ACH, card, or to update billing details, use the button on any open invoice — it opens a request to our billing desk and we’ll send a secure payment link.</p>
+    </section>
+
+    <!-- documents -->
+    <section class="panel" id="panel-documents">
+      <div class="sect-title"><h2>Documents &amp; deliverables</h2><span class="mono" id="docCount"></span></div>
+      <div class="rows" id="docRows"></div>
+      <p style="margin-top:22px;font-size:13.5px;color:var(--mut-dark)">Deliverables are shared from STK’s secure drive. “Request” sends a note to your engagement lead, who will grant access to the file within one business day.</p>
+    </section>
+
+    <!-- support -->
+    <section class="panel" id="panel-support">
+      <div class="sect-title"><h2>Support</h2></div>
+      <div class="sup-grid">
+        <div class="sup-card">
+          <p class="mono">Engagement lead</p>
+          <h3 id="supLead">—</h3>
+          <p>Questions on scope, timeline, or deliverables — your lead is the fastest path. Typical response within one business day.</p>
+          <a class="row-act" id="supLeadMail" href="#">Email your lead</a>
+        </div>
+        <div class="sup-card">
+          <p class="mono">Billing desk</p>
+          <h3>Invoices &amp; payments</h3>
+          <p>Remittance questions, W-9 requests, payment method changes, or invoice corrections.</p>
+          <a class="row-act line" href="mailto:usman_khan@stktechnologiesconsulting.com?subject=Billing%20question">Email billing</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="pfoot">
+      <span>© <span id="yr"></span> STK Technologies LLC</span>
+      <a href="/">stktechnologiesconsulting.com</a>
+    </footer>
+  </div>
+</main>
+
+<script>
+/* ============================================================
+   CLIENT DATA — edit this block to onboard / update a client.
+   Each key is an access code (uppercase). Keep codes hard to
+   guess. Note: this is a lightweight convenience gate on a
+   static site, not authentication — don't put anything truly
+   sensitive here; deliverable files stay on the secure drive.
+   ============================================================ */
+const CLIENTS = {
+  "STK-DEMO": {
+    company: "Demo Client Co.",
+    contact: "Guest",
+    lead: { name: "Usman Khan", email: "usman_khan@stktechnologiesconsulting.com" },
+    engagement: {
+      title: "ERP Modernization — Phase 2",
+      status: "On track",
+      phase: "Build & configure",
+      start: "May 2026",
+      nextMilestone: "UAT kickoff — Aug 3, 2026",
+    },
+    milestones: [
+      { name: "Discovery & current-state assessment", when: "May 2026", state: "done",
+        desc: "Stakeholder interviews, systems inventory, and gap analysis delivered." },
+      { name: "Solution blueprint sign-off", when: "Jun 2026", state: "done",
+        desc: "Target architecture and phased rollout plan approved by steering committee." },
+      { name: "Build & configuration", when: "Jul 2026", state: "now",
+        desc: "Core modules configured; integrations in progress. Weekly status every Friday." },
+      { name: "User acceptance testing", when: "Aug 2026", state: "next",
+        desc: "UAT scripts distributed two weeks prior; defect triage runs daily during the window." },
+      { name: "Go-live & hypercare", when: "Sep 2026", state: "next",
+        desc: "Cutover weekend followed by two weeks of hypercare support." },
+    ],
+    invoices: [
+      { id: "INV-2026-014", title: "Phase 2 — June services", date: "Jul 1, 2026", amount: "$12,400.00", status: "paid" },
+      { id: "INV-2026-019", title: "Phase 2 — July services", date: "Aug 1, 2026", amount: "$12,400.00", status: "due" },
+    ],
+    documents: [
+      { id: "DOC-01", type: "PDF", title: "Statement of Work — Phase 2 (executed)", updated: "May 12, 2026" },
+      { id: "DOC-02", type: "PDF", title: "Solution Blueprint v1.3", updated: "Jun 20, 2026" },
+      { id: "DOC-03", type: "XLSX", title: "Integration cutover checklist", updated: "Jul 14, 2026" },
+      { id: "DOC-04", type: "PDF", title: "Weekly status report — Jul 10", updated: "Jul 10, 2026" },
+    ],
+  },
+};
+
+const $ = (s) => document.querySelector(s);
+const BILLING = "usman_khan@stktechnologiesconsulting.com";
+let client = null;
+
+/* ---- gate ---- */
+$("#gateForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const code = $("#gCode").value.trim().toUpperCase();
+  if (CLIENTS[code]) {
+    sessionStorage.setItem("stk_portal_code", code);
+    sessionStorage.setItem("stk_portal_email", $("#gEmail").value.trim());
+    enter(code);
+  } else {
+    $("#gateErr").classList.add("show");
+  }
+});
+$("#gCode").addEventListener("input", () => $("#gateErr").classList.remove("show"));
+
+$("#signOut").addEventListener("click", () => {
+  sessionStorage.removeItem("stk_portal_code");
+  sessionStorage.removeItem("stk_portal_email");
+  location.reload();
+});
+
+/* ---- render ---- */
+function enter(code) {
+  client = CLIENTS[code];
+  $("#gate").style.display = "none";
+  $("#portal").style.display = "block";
+
+  $("#hName").textContent = client.contact;
+  $("#hEyebrow").textContent = client.company;
+  $("#hMeta").textContent = `${client.engagement.title} · started ${client.engagement.start}`;
+
+  const openInv = client.invoices.filter((i) => i.status !== "paid").length;
+  $("#statGrid").innerHTML = `
+    <div class="stat"><div class="stat-v ok">${client.engagement.status}</div><div class="stat-l">Engagement status</div></div>
+    <div class="stat"><div class="stat-v">${client.engagement.phase}</div><div class="stat-l">Current phase</div></div>
+    <div class="stat"><div class="stat-v">${client.engagement.nextMilestone}</div><div class="stat-l">Next milestone</div></div>
+    <div class="stat"><div class="stat-v">${openInv}</div><div class="stat-l">Open invoice${openInv === 1 ? "" : "s"}</div></div>`;
+
+  $("#msCount").textContent = `${client.milestones.filter((m) => m.state === "done").length} of ${client.milestones.length} complete`;
+  $("#msList").innerHTML = client.milestones.map((m) => `
+    <li class="${m.state}">
+      <span class="dot" aria-hidden="true"></span>
+      <h4>${m.name}</h4>
+      <p class="when">${m.when}${m.state === "now" ? " · in progress" : m.state === "done" ? " · complete" : ""}</p>
+      <p>${m.desc}</p>
+    </li>`).join("");
+
+  $("#invCount").textContent = `${client.invoices.length} total · ${openInv} open`;
+  $("#invRows").innerHTML = client.invoices.length ? client.invoices.map((i) => `
+    <div class="row row-inv">
+      <span class="id">${i.id}</span>
+      <span><span class="ttl">${i.title}</span><br><span class="sub">Issued ${i.date}</span></span>
+      <span class="amt">${i.amount}</span>
+      <span class="pill ${i.status}">${i.status}</span>
+      ${i.status === "paid"
+        ? `<a class="row-act line" href="mailto:${BILLING}?subject=Receipt%20request%20${encodeURIComponent(i.id)}">Receipt</a>`
+        : `<a class="row-act" href="mailto:${BILLING}?subject=Payment%20link%20request%20${encodeURIComponent(i.id)}&body=Please%20send%20a%20secure%20payment%20link%20for%20${encodeURIComponent(i.id)}%20(${encodeURIComponent(i.amount)}).">Pay</a>`}
+    </div>`).join("") : `<p class="empty">No invoices yet.</p>`;
+
+  $("#docCount").textContent = `${client.documents.length} file${client.documents.length === 1 ? "" : "s"}`;
+  $("#docRows").innerHTML = client.documents.length ? client.documents.map((d) => `
+    <div class="row row-doc">
+      <span class="pill doc">${d.type}</span>
+      <span><span class="ttl">${d.title}</span><br><span class="sub">Updated ${d.updated}</span></span>
+      <span class="sub">${d.id}</span>
+      <a class="row-act line" href="mailto:${client.lead.email}?subject=File%20request%3A%20${encodeURIComponent(d.title)}">Request</a>
+    </div>`).join("") : `<p class="empty">No documents shared yet.</p>`;
+
+  $("#supLead").textContent = client.lead.name;
+  $("#supLeadMail").href = `mailto:${client.lead.email}?subject=${encodeURIComponent(client.engagement.title)}`;
+}
+
+/* ---- tabs ---- */
+document.querySelectorAll(".ptabs button").forEach((b) => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".ptabs button").forEach((x) => { x.classList.remove("active"); x.setAttribute("aria-selected", "false"); });
+    document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+    b.classList.add("active");
+    b.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + b.dataset.tab).classList.add("active");
+  });
+});
+
+/* ---- boot ---- */
+$("#yr").textContent = new Date().getFullYear();
+const saved = sessionStorage.getItem("stk_portal_code");
+if (saved && CLIENTS[saved]) enter(saved);
+</script>
+</body>
+</html>
